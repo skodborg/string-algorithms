@@ -1,6 +1,6 @@
 from itertools import count
 import os.path
-import pydot
+import pydotplus as pydot
 
 TESTSTRING = "Mississippi"
 TEST = "tatat"
