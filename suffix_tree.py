@@ -1,11 +1,17 @@
 from itertools import count
 import os.path
+import pydot
 
 TESTSTRING = "Mississippi"
 TEST = "tatat"
 
 
 class Tree:
+    def visualize(self):
+        self.graph = pydot.Dot(graph_type='graph')
+        self.root.visualize(self.graph)
+        self.graph.write_png('example1_graph.png')
+    
     def common_prefix(self, str1, str2):
         return os.path.commonprefix([str1, str2])
 
@@ -68,6 +74,14 @@ class Node:
         for c in self.children:
             result += c.parentEdge + ' - '
         return result
+    
+    def visualize(self, graph):
+        if self.parent is not None:
+            edge = pydot.Edge(self.parent.id, self.id, label=self.parentEdge)
+            graph.add_edge(edge)
+            
+        for c in self.children:
+            c.visualize(graph)
 
 
 # def construct_suffix_tree(aString):
@@ -82,7 +96,10 @@ class Node:
 
 def main():
     # initialize suffix tree
-    print(Tree(TEST))
+    tree = Tree(TEST)
+    
+    print(tree)
+    tree.visualize()
 
 if __name__ == '__main__':
     main()
