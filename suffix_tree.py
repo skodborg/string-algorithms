@@ -2,8 +2,9 @@ from itertools import count
 import os.path
 import pydotplus as pydot
 
-TESTSTRING = "Mississippi"
-TEST = "tatat"
+TESTSTRING = "mississippi"
+# TESTSTRING = 'adabadcade'
+
 
 
 class Tree:
@@ -19,6 +20,7 @@ class Tree:
         for child in aNode.children:
             curr_parentEdge = child.parentEdge
             this_prefix = self.common_prefix(curr_parentEdge, aString)
+            
             if this_prefix:
                 return child, this_prefix
         return None, ''
@@ -32,12 +34,35 @@ class Tree:
             
             child, shared_prefix = self.find_child_with_common_prefix(curr_node, curr_suffix)
 
+            while shared_prefix and shared_prefix == child.parentEdge:
+                curr_suffix = curr_suffix[len(shared_prefix):]
+                curr_node = child
+                child, shared_prefix = self.find_child_with_common_prefix(child, curr_suffix)
+
+
             if not shared_prefix:
                 # no common prefix found, insert this prefix below root
-                new_child = Node(self.root, curr_suffix)
+                new_child = Node(curr_node, curr_suffix)
                 curr_node.add_child(new_child)
+            else:
+                # splitting up existing edge where new suffix is to branch
+                head = shared_prefix
+                tail = child.parentEdge[len(head):]
 
-            # TODO: HANDLE SHARED PREFIX WITH AN EXISTING CHILD
+                # create and insert intermediate node
+                new_node = Node(curr_node, head)
+                curr_node.add_child(new_node)
+                curr_node.remove_child(child)
+                new_node.add_child(child)
+
+                # update old child to point to new intermediate node
+                child.parent = new_node
+                child.parentEdge = tail
+
+                # create and insert new leaf node with the new suffix
+                new_leaf = Node(new_node, curr_suffix[len(head):])
+                new_node.add_child(new_leaf)
+
 
     def __init__(self, aInput):
         self.root = Node(None)
@@ -55,8 +80,8 @@ class Node:
     def add_child(self, new_child):
         self.children.append(new_child)
 
-    def remove_child(self):
-        print("TODO")
+    def remove_child(self, old_child):
+        self.children.remove(old_child)
 
     def is_leaf(self):
         return len(self.children) == 0
@@ -68,12 +93,8 @@ class Node:
         self.children = []
 
     def __str__(self):
-        # return "NODE-%i   parent:%s   p.Edge:%s   children:%s" % (self.id, \
-        #     self.parent, self.parentEdge, self.children)
-        result = ''
-        for c in self.children:
-            result += c.parentEdge + ' - '
-        return result
+        return "NODE-%i   parent:%s   p.Edge:%s   children:%s" % (self.id, \
+            self.parent, self.parentEdge, self.children)
     
     def visualize(self, graph):
         if self.parent is not None:
@@ -84,21 +105,10 @@ class Node:
             c.visualize(graph)
 
 
-# def construct_suffix_tree(aString):
-#     """ returns a suffix tree of the given string,
-#         constructed naively in time O(n^2) """
-#     # iterate through each suffix of the string and insert each one
-#     last_idx = len(aString)
-#     for i in range(len(aString)):
-#         curr_suffix = aString[i:last_idx]
-#         print(curr_suffix)
-
-
 def main():
     # initialize suffix tree
-    tree = Tree(TEST)
-    
-    print(tree)
+    tree = Tree(TESTSTRING)
+
     tree.visualize()
 
 if __name__ == '__main__':
