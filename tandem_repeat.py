@@ -3,8 +3,8 @@ import visualize_suffix_tree as vst
 
 
 def basic_tandemrepeat(aTree):
-    branching = 0
-    nonbranching = 0
+    branching = []
+    nonbranching = []
 
     all_treenodes = []
     aTree.traverse(lambda x: all_treenodes.append(x))
@@ -30,21 +30,27 @@ def basic_tandemrepeat(aTree):
                 test2 = S[i.id - 1] != S[i.id + (2 * Dv) - 1]
 
                 if test1 and test2:
-                    # print("branching tandem repeat at %i: %s" % (i.id, S[i.id-1:i.id+2*Dv-1]))
-                    branching += 1
+                    # found branching tandem repeat!
+                    start_idx = i.id - 1
+                    tandem_length = 2 * Dv
+                    branchingtandem = S[start_idx: start_idx + tandem_length]
+                    branching.append(branchingtandem)
 
                     k = i.id - 1
                     while S[k - 1] == S[k + (2 * Dv) - 1]:
-                        # print("non-branching tandem repeat at %i: %s" % (k, S[k-1:k+(2*Dv)-1]))
+                        # found non-branching tandem repeat!
+                        start_idx = k - 1
+                        tandem_length = 2 * Dv
+                        nonbranchingtandem = S[k - 1: k + (2 * Dv) - 1]
+                        nonbranching.append(nonbranchingtandem)
                         k -= 1
-                        nonbranching += 1
-    print('%i %i' % (branching, nonbranching))
+
+    print('%i %i' % (len(branching), len(nonbranching)))
 
 
 def main():
     input = 'mississippi'
     tree = suffix.Tree(input)
-
     basic_tandemrepeat(tree)
     # vst.visualize(tree).write_png('tandem.png')
 
