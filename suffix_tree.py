@@ -7,6 +7,17 @@ import time
 
 # TODO: parentEdge should be pointers into input string instead
 class Tree:
+    def traverse(self, fn):
+        self._traverse(self.root, fn)
+
+    def _traverse(self, aNode, fn):
+        if len(aNode.children) == 0:
+            fn(aNode)
+        else:
+            fn(aNode)
+            for child in aNode.children:
+                self._traverse(child, fn)
+
     def _commonprefix(self, str1, str2):
         return os.path.commonprefix([str1, str2])
 
@@ -57,7 +68,7 @@ class Tree:
                 new_leaf = Node(suffix_str_idx, new_node, curr_suffix[len(head):])
                 new_node.add_child(new_leaf)
 
-    def find_leaf_descendants(self, aNode):
+    def find_leaflist(self, aNode):
         leafnode_list = []
         if len(aNode.children) == 0:
             # base case; aNode has no children, return itself as it is a leaf
@@ -65,12 +76,13 @@ class Tree:
         else:
             # rec. case; aNode has children, return all their leaf descendants
             for c in aNode.children:
-                recursive_leafnodes_list = self.find_leaf_descendants(c)
+                recursive_leafnodes_list = self.find_leaflist(c)
                 leafnode_list.append(recursive_leafnodes_list)
             # flatten before return; should not be list-of-lists, just a list
             flat_leaf_list = [i for sublist in leafnode_list for i in sublist]
             return flat_leaf_list
 
+    # TODO: rewrite using Tree.traversal?
     def search_pattern(self, aPattern):
         ''' returns a list of indices at which the given pattern can be found
             in the string the suffix tree is based upon, or an empty list if
@@ -85,7 +97,7 @@ class Tree:
                 elif aPattern == shared_prefix:
                     # Pattern is matched! All leaf nodes below this child
                     # contains the searched pattern; return id of these
-                    leaf_nodes = self.find_leaf_descendants(child)
+                    leaf_nodes = self.find_leaflist(child)
                     leaf_node_indices = [node.id for node in leaf_nodes]
                     return leaf_node_indices
 
@@ -141,6 +153,31 @@ class Node:
 
     def is_leaf(self):
         return len(self.children) == 0
+
+    def path(self):
+        if self.parent is None:
+            return ''
+        else:
+            return self.parent.path() + self.parentEdge
+
+    def leaflist(self):
+        def rec_helper(aNode):
+            temp = []
+            if len(aNode.children) == 0:
+                # base case
+                # aNode has no children, return itself as it is a leaf
+                return [aNode]
+            else:
+                # rec. case
+                # aNode has children, return all their leaf descendants
+                for c in aNode.children:
+                    recursive_leafnodes_list = c.leaflist()
+                    temp.append(recursive_leafnodes_list)
+                # flatten before return
+                # should not return list-of-lists, just a flat list
+                flat_leaf_list = [i for sublist in temp for i in sublist]
+                return flat_leaf_list
+        return rec_helper(self)
 
     def __init__(self, aId, aParent, aParentEdge=''):
         self.graphid = next(self._ids)

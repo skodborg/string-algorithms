@@ -6,7 +6,13 @@ import suffix_tree
 def visualize(aTree):
     def traverse(aNode, graph):
         node_lbl = aNode.id if aNode.id > 0 else ''
-        graph.add_node(pydot.Node(aNode.graphid, label=node_lbl))
+        if hasattr(aNode, 'marked') and aNode.marked:
+            graph.add_node(pydot.Node(aNode.graphid,
+                                      label=node_lbl,
+                                      style='filled',
+                                      fillcolor='#ddffdd'))
+        else:
+            graph.add_node(pydot.Node(aNode.graphid, label=node_lbl))
 
         if aNode.parent is not None:
             edge = pydot.Edge(aNode.parent.graphid,
@@ -18,7 +24,8 @@ def visualize(aTree):
             traverse(c, graph)
 
     graph = pydot.Dot(graph_type='graph')
-    traverse(aTree, graph)
+    tree_root = aTree.root if type(aTree) == suffix_tree.Tree else aTree
+    traverse(tree_root, graph)
     return graph
 
 
