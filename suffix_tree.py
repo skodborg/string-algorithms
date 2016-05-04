@@ -38,16 +38,23 @@ class Tree:
             curr_suffix = self.input[i:last_idx]
             curr_node = self.root
 
-            child, shared_prefix = self._findchildwithLCP(curr_node, curr_suffix)
+            child, shared_prefix = self._findchildwithLCP(curr_node,
+                                                          curr_suffix)
+            path = shared_prefix
 
             while shared_prefix and shared_prefix == child.parentEdge:
                 curr_suffix = curr_suffix[len(shared_prefix):]
                 curr_node = child
-                child, shared_prefix = self._findchildwithLCP(child, curr_suffix)
+                child, shared_prefix = self._findchildwithLCP(child,
+                                                              curr_suffix)
+                path += shared_prefix
 
             if not shared_prefix:
                 # no common prefix found, insert this prefix below root
-                new_child = Node(suffix_str_idx, curr_node, curr_suffix)
+                new_child = Node(suffix_str_idx,
+                                 curr_node,
+                                 curr_suffix,
+                                 curr_suffix)
                 curr_node.add_child(new_child)
             else:
                 # splitting up existing edge where new suffix is to branch
@@ -55,7 +62,7 @@ class Tree:
                 tail = child.parentEdge[len(head):]
 
                 # create and insert intermediate node
-                new_node = Node(0, curr_node, head)
+                new_node = Node(0, curr_node, head, path)
                 curr_node.add_child(new_node)
                 curr_node.remove_child(child)
                 new_node.add_child(child)
@@ -63,9 +70,13 @@ class Tree:
                 # update old child to point to new intermediate node
                 child.parent = new_node
                 child.parentEdge = tail
+                child.path = path + tail
 
                 # create and insert new leaf node with the new suffix
-                new_leaf = Node(suffix_str_idx, new_node, curr_suffix[len(head):])
+                new_leaf = Node(suffix_str_idx,
+                                new_node,
+                                curr_suffix[len(head):],
+                                path + curr_suffix[len(head):])
                 new_node.add_child(new_leaf)
 
     def find_leaflist(self, aNode):
@@ -154,12 +165,6 @@ class Node:
     def is_leaf(self):
         return len(self.children) == 0
 
-    def path(self):
-        if self.parent is None:
-            return ''
-        else:
-            return self.parent.path() + self.parentEdge
-
     def leaflist(self):
         def rec_helper(aNode):
             temp = []
@@ -179,11 +184,12 @@ class Node:
                 return flat_leaf_list
         return rec_helper(self)
 
-    def __init__(self, aId, aParent, aParentEdge=''):
+    def __init__(self, aId, aParent, aParentEdge='', aPath=''):
         self.graphid = next(self._ids)
         self.id = aId
         self.parent = aParent
         self.parentEdge = aParentEdge
+        self.path = aPath
         self.children = []
 
 
