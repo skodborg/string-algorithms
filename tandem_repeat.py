@@ -1,6 +1,7 @@
 import suffix_tree as suffix
 import visualize_suffix_tree as vst
 import time
+import argparse
 
 
 def basic_tandemrepeat(aTree):
@@ -178,13 +179,33 @@ def exp():
 
 
 def main():
-    input = 'mississippi'
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-b', '--basic', action='store_true',
+                        help='use the basic algorithm instead of the '
+                             'optimized one')
+    parser.add_argument('-v', '--visualize', type=str,
+                        metavar='FILE',
+                        help='draws the suffix tree to the file specified')
+    parser.add_argument('file',
+                        help='file in which to find tandem repeats')
+    args = parser.parse_args()
+
+    inputfile = args.file
+    alg_choice = args.basic
+    visualize_choice = args.visualize
+
     # input = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
     # input = 'qwertyuiopasdfghjklzxcvbnm1234567890'
+    input = suffix.read_input(inputfile)
     tree = suffix.Tree(input)
-    # basic_tandemrepeat(tree)
-    optimized_tandemrepeat(tree)
-    vst.visualize(tree.root).write_png('tandem.png')
+
+    if alg_choice:
+        basic_tandemrepeat(tree)
+    else:
+        optimized_tandemrepeat(tree)
+
+    if visualize_choice:
+        vst.visualize(tree.root).write_png(visualize_choice)
 
 
 if __name__ == '__main__':
