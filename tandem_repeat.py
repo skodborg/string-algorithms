@@ -76,7 +76,7 @@ def dfs_preprocess(suffixtree):
     return dfs
 
 
-def optimized_tandemrepeat(aTree):
+def optimized_tandemrepeat(aTree, profiling=False):
     dfs = dfs_preprocess(aTree)
 
     branching = set()
@@ -84,7 +84,11 @@ def optimized_tandemrepeat(aTree):
 
     all_treenodes = []
     aTree.traverse(lambda node: all_treenodes.append(node))
+
+    profiling_counter = 0
+
     for v in all_treenodes:
+        profiling_counter += 1
         if v.is_leaf():
             # leaf node, we're only interested in internal nodes for now
             continue
@@ -110,12 +114,16 @@ def optimized_tandemrepeat(aTree):
         # find elements in LLv but not in LLvm
         LLmv = list(set(range(LLv[0], LLv[1] + 1)) -
                     set(range(LLvm[0], LLvm[1] + 1)))
-        # convert from lsit of dfs indexes to list of actual nodes
+        # convert from list of dfs indexes to list of actual nodes
         LLmv = [dfs[i] for i in LLmv]
+
+        # print('at node %i' % v.id)
+        # print([x.id for x in LLmv])
 
         Dv = len(v.path)
         S = aTree.input
         for i in LLmv:
+            profiling_counter += 1
             j = i.id + Dv
             test1 = any(n.id == j for n in LLv_actual)
 
@@ -127,11 +135,13 @@ def optimized_tandemrepeat(aTree):
 
                     k = i.id - 1
                     while S[k - 1] == S[k + (2 * Dv) - 1]:
+                        profiling_counter += 1
                         # found non-branching tandem repeat!
                         nonbranching.add((k, S[k - 1: k + (2 * Dv) - 1]))
                         k -= 1
 
         for j in LLmv:
+            profiling_counter += 1
             i = j.id - Dv
             test1 = any(n.id == i for n in LLv_actual)
 
@@ -143,9 +153,13 @@ def optimized_tandemrepeat(aTree):
 
                     k = i - 1
                     while S[k - 1] == S[k + (2 * Dv) - 1]:
+                        profiling_counter += 1
                         # found non-branching tandem repeat!
                         nonbranching.add((k, S[k - 1: k + (2 * Dv) - 1]))
                         k -= 1
+
+    if profiling:
+        return profiling_counter
 
     return list(branching), list(nonbranching)
 
