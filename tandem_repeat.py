@@ -117,9 +117,6 @@ def optimized_tandemrepeat(aTree, profiling=False):
         # convert from list of dfs indexes to list of actual nodes
         LLmv = [dfs[i] for i in LLmv]
 
-        # print('at node %i' % v.id)
-        # print([x.id for x in LLmv])
-
         Dv = len(v.path)
         S = aTree.input
         for i in LLmv:
