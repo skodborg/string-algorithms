@@ -33,14 +33,15 @@ def visualize(aTree):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("string", help="String to build suffix tree over")
+    parser.add_argument("file", help="Data to build suffix tree over")
     parser.add_argument("output", help="Name of file to output graph image to")
     args = parser.parse_args()
 
-    input_string = args.string
+    inputfile = args.file
+    input = suffix_tree.read_input(inputfile)
     output_file = args.output
 
-    tree = suffix_tree.Tree(input_string)
+    tree = suffix_tree.Tree(input)
     graph = visualize(tree.root)
     graph.write_png('%s.png' % output_file)
 
