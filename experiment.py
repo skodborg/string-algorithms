@@ -5,7 +5,6 @@ import argparse
 import matplotlib.pyplot as plt
 import math
 
-
 def experiment(aString, aOutputPrefix):
     timings = []
     comparisons = []
@@ -22,16 +21,16 @@ def experiment(aString, aOutputPrefix):
         basic_branching, basic_nonbranching = tandem.basic_tandemrepeat(tree)
         basic_endtime = time.time()
         basic_timediff = basic_endtime - basic_starttime
-        # basic_timediff = basic_timediff / (n * math.log(n))
-        basic_timediff = basic_timediff / (n * n)
+        basic_timediff = basic_timediff / (n * math.log(n)) * 1000000
+        # basic_timediff = basic_timediff / (n * n) * 1000000
 
         # timing optimized algorithm
         optmzd_starttime = time.time()
         optmzd_branching, optmzd_nonbranching = tandem.optimized_tandemrepeat(tree)
         optmzd_endtime = time.time()
         optmzd_timediff = optmzd_endtime - optmzd_starttime
-        optmzd_timediff = optmzd_timediff / (n * math.log(n))
-        optmzd_timediff = optmzd_timediff / (n * n)
+        optmzd_timediff = optmzd_timediff / (n * math.log(n)) * 1000000
+        # optmzd_timediff = optmzd_timediff / (n * n) * 1000000
 
         timings.append((i, basic_timediff, optmzd_timediff))
         comparisons.append((i, 
@@ -81,6 +80,7 @@ def main():
 
     plot('%s_basictimings.txt' % outputprefix)
     plot('%s_optmzdtimings.txt' % outputprefix)
+
 
 if __name__ == '__main__':
     main()
