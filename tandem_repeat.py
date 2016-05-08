@@ -5,8 +5,8 @@ import argparse
 
 
 def basic_tandemrepeat(aTree):
-    branching = []
-    nonbranching = []
+    branching = set()
+    nonbranching = set()
 
     all_treenodes = []
     aTree.traverse(lambda x: all_treenodes.append(x))
@@ -35,7 +35,7 @@ def basic_tandemrepeat(aTree):
                     start_idx = i.id - 1
                     tandem_length = 2 * Dv
                     branchingtandem = S[start_idx: start_idx + tandem_length]
-                    branching.append(branchingtandem)
+                    branching.add((start_idx, branchingtandem))
 
                     k = i.id - 1
                     while S[k - 1] == S[k + (2 * Dv) - 1]:
@@ -43,10 +43,10 @@ def basic_tandemrepeat(aTree):
                         start_idx = k - 1
                         tandem_length = 2 * Dv
                         nonbranchingtandem = S[k - 1: k + (2 * Dv) - 1]
-                        nonbranching.append(nonbranchingtandem)
+                        nonbranching.add((k, nonbranchingtandem))
                         k -= 1
 
-    print('%i %i' % (len(branching), len(nonbranching)))
+    return list(branching), list(nonbranching)
 
 
 def dfs_preprocess(suffixtree):
@@ -147,7 +147,7 @@ def optimized_tandemrepeat(aTree):
                         nonbranching.add((k, S[k - 1: k + (2 * Dv) - 1]))
                         k -= 1
 
-    print('%i %i' % (len(branching), len(nonbranching)))
+    return list(branching), list(nonbranching)
 
 
 def exp():
@@ -200,9 +200,11 @@ def main():
     tree = suffix.Tree(input)
 
     if alg_choice:
-        basic_tandemrepeat(tree)
+        branching, nonbranching = basic_tandemrepeat(tree)
+        print('%i %i' % (len(branching), len(nonbranching)))
     else:
-        optimized_tandemrepeat(tree)
+        branching, nonbranching = optimized_tandemrepeat(tree)
+        print('%i %i' % (len(branching), len(nonbranching)))
 
     if visualize_choice:
         vst.visualize(tree.root).write_png(visualize_choice)
