@@ -34,6 +34,18 @@ def simple_profiling(aFile, stepsize):
     plt.show()
 
 
+def plot(csvFile):
+    data = st.read_input(csvFile)
+    data = data.rstrip().split('\n')
+    xs = []
+    ys = []
+    for p in data:
+        data_tuple = p.split(',')
+        xs.append(int(data_tuple[0]))
+        ys.append(float(data_tuple[1]))
+    return xs, ys
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("file")
