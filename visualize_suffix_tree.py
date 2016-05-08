@@ -5,7 +5,8 @@ import suffix_tree
 
 def visualize(aTree):
     def traverse(aNode, graph):
-        node_lbl = aNode.id if aNode.id > 0 else ''
+        # node_lbl = aNode.id if aNode.id > 0 else ''
+        node_lbl = aNode.path
         if hasattr(aNode, 'marked') and aNode.marked:
             graph.add_node(pydot.Node(aNode.graphid,
                                       label=node_lbl,

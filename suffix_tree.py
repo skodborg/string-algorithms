@@ -14,9 +14,9 @@ class Tree:
         if len(aNode.children) == 0:
             fn(aNode)
         else:
-            fn(aNode)
             for child in aNode.children:
                 self._traverse(child, fn)
+            fn(aNode)
 
     def _commonprefix(self, str1, str2):
         return os.path.commonprefix([str1, str2])
@@ -39,15 +39,18 @@ class Tree:
             curr_node = self.root
 
             child, shared_prefix = self._findchildwithLCP(curr_node, curr_suffix)
+            path = shared_prefix
 
             while shared_prefix and shared_prefix == child.parentEdge:
                 curr_suffix = curr_suffix[len(shared_prefix):]
                 curr_node = child
                 child, shared_prefix = self._findchildwithLCP(child, curr_suffix)
+                path += shared_prefix
 
             if not shared_prefix:
                 # no common prefix found, insert this prefix below root
                 new_child = Node(suffix_str_idx, curr_node, curr_suffix)
+                new_child.path = curr_suffix
                 curr_node.add_child(new_child)
             else:
                 # splitting up existing edge where new suffix is to branch
@@ -56,6 +59,7 @@ class Tree:
 
                 # create and insert intermediate node
                 new_node = Node(0, curr_node, head)
+                new_node.path = path
                 curr_node.add_child(new_node)
                 curr_node.remove_child(child)
                 new_node.add_child(child)
@@ -63,9 +67,11 @@ class Tree:
                 # update old child to point to new intermediate node
                 child.parent = new_node
                 child.parentEdge = tail
+                child.path = path + tail
 
                 # create and insert new leaf node with the new suffix
                 new_leaf = Node(suffix_str_idx, new_node, curr_suffix[len(head):])
+                new_leaf.path = head + curr_suffix[len(head):]
                 new_node.add_child(new_leaf)
 
     def find_leaflist(self, aNode):
