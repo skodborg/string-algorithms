@@ -13,8 +13,24 @@ def simple_longest_border(aString):
     return borderlength
 
 
+def search_naive(aString, aPattern):
+    ''' finds occurrences of aPattern in aString in time O(nm) and returns
+        a list of one-indexed occurrences of aPattern in aString '''
+    n = len(aString) - 1
+    m = len(aPattern) - 1
+    s = aString
+    p = aPattern
+    occurrences = []
+    for i in range(n):
+        if s[i:i + m + 1] == p:
+            # found a pattern match! append index to list of occurrences
+            occurrences.append(i + 1)
+    return occurrences
+
+
 def main():
-    print(simple_longest_border('aabcdeaab'))
+    # print(simple_longest_border('aabcdeaab'))
+    # print(search_naive('mississippi', 'ss'))
 
 if __name__ == '__main__':
     main()
