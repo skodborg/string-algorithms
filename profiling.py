@@ -43,6 +43,8 @@ def plot(csvFile):
         data_tuple = p.split(',')
         xs.append(int(data_tuple[0]))
         ys.append(float(data_tuple[1]))
+    plt.plot(xs, ys)
+    plt.show()
     return xs, ys
 
 
