@@ -28,6 +28,14 @@ def search_naive(aString, aPattern):
     return occurrences
 
 
+def search_ba(aString, aPattern):
+    pass
+
+
+def search_kmp(aString, aPattern):
+    pass
+
+
 def main():
     # print(simple_longest_border('aabcdeaab'))
     # print(search_naive('mississippi', 'ss'))
