@@ -1,4 +1,4 @@
-# import suffix_tree as suffix
+import time
 
 
 def simple_longest_border(aString):
@@ -109,12 +109,63 @@ def search_kmp(aString, aPattern):
     return occurrences
 
 
+def experiments(aInputFile, aPatternFile):
+    f = open(aInputFile, 'r', encoding='latin1')
+    input = f.read()
+    f = open(aPatternFile, 'r', encoding='latin1')
+    pattern = f.read()
+    
+    total_time = 0
+    count = 0
+
+    for _ in range(3):
+        start_time = time.time()
+        naive_result = search_naive(input, pattern)
+        end_time = time.time()
+        count += 1
+        total_time += end_time - start_time
+    naive_avg = total_time / count
+    print('naive avg: %f' % naive_avg)
+    
+    total_time = 0
+    count = 0
+
+    for _ in range(3):
+        start_time = time.time()
+        ba_result = search_ba(input, pattern)
+        end_time = time.time()
+        count += 1
+        total_time += end_time - start_time
+    ba_avg = total_time / count
+    print('ba avg: %f' % ba_avg)
+
+    total_time = 0
+    count = 0
+
+    for _ in range(3):
+        start_time = time.time()
+        kmp_result = search_kmp(input, pattern)
+        end_time = time.time()
+        count += 1
+        total_time += end_time - start_time
+    kmp_avg = total_time / count
+    print('kmp avg: %f' % kmp_avg)
+
+    print()
+    print(naive_result)
+    print()
+    print(ba_result)
+    print()
+    print(kmp_result)
+
 def main():
     # print(simple_longest_border('aabcdeaab'))
     # print(border_array('aabcdaaecaabc'))
-    print(search_naive('mississippi', 'ssi'))
-    print(search_ba('mississippi', 'ssi'))
-    print(search_kmp('mississippi', 'ssi'))
+    # print(search_naive('mississippi', 'ssi'))
+    # print(search_ba('mississippi', 'ssi'))
+    # print(search_kmp('mississippi', 'ssi'))
+    experiments('project3/chr1_10000000.txt', 'project3/pattern5000.txt')
+
 
 if __name__ == '__main__':
     main()
