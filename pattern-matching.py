@@ -74,14 +74,47 @@ def search_ba(aString, aPattern):
 
 
 def search_kmp(aString, aPattern):
-    pass
+    occurrences = []
+
+    # preprocessing:
+    m = len(aPattern)
+    n = len(aString)
+    x = aString
+    p = aPattern
+    B = border_array(aPattern)
+    Bm = [0]
+    for j in range(2, m + 1 + 1):
+        Bm.append(B[j - 1 - 1] + 1)
+    
+    # helper
+    def match(i, j, m):
+        while j <= m and x[i - 1] == p[j - 1]:
+            i += 1
+            j += 1
+        return i, j
+
+    # main:
+    i, j = 1, 1
+    while i <= n - m + j:
+        i, j = match(i, j, m)
+        if j == m + 1:
+            # pattern found! 
+            # subtract pattern length from current index and report this
+            occurrences.append(i - m)
+        if j == 1:
+            i += 1
+        else:
+            j = Bm[j - 1]
+
+    return occurrences
 
 
 def main():
     # print(simple_longest_border('aabcdeaab'))
-    # print(search_naive('mississippi', 'ss'))
     # print(border_array('aabcdaaecaabc'))
-    print(search_ba('mississippi', 'ss'))
+    print(search_naive('mississippi', 'ssi'))
+    print(search_ba('mississippi', 'ssi'))
+    print(search_kmp('mississippi', 'ssi'))
 
 if __name__ == '__main__':
     main()
