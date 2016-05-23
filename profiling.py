@@ -34,6 +34,15 @@ def simple_profiling(aFile, stepsize):
     plt.show()
 
 
+def plot_list(aList, xs):
+    # xs = list(range(len(aList)))
+    ys = aList
+    plt.plot(xs, ys)
+    # plt.axis([0,100000,0,50])
+    plt.show()
+    return xs, ys
+
+
 def plot(csvFile):
     data = st.read_input(csvFile)
     data = data.rstrip().split('\n')
